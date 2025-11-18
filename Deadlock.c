@@ -16,6 +16,7 @@ void initGraph(graph *g, int vertices) {
             g->adj[i][j] = 0;
         }
     }
+    printf("Graph initialized with %d vertices\n",vertices);
 }
 
 void addVertex(graph*g){
@@ -30,6 +31,7 @@ void addVertex(graph*g){
         g->adj[n][i] = 0;
     }
     (g->vertices)++;
+    printf(" Vertex %d added successfully\n", n);
 }
 
 bool addEdge(graph *g, int u, int v) {
@@ -37,18 +39,19 @@ bool addEdge(graph *g, int u, int v) {
         printf("Graph not initialized!\n");
         return false;
     }
+
     if(g->vertices <=0){
         printf("Graph is not initialized, Please create a graph first.");
         return false;
     }
-    
+
     if (u < 0 || v < 0 || u >= g->vertices || v >= g->vertices) {
         printf("Invalid edge (%d, %d)\n", u, v);
         return false;
     }
 
     g->adj[u][v] = 1;
-    g->adj[v][u] = 1; // undirected edge
+    printf("Edge added between vertex %d and %d\n", u, v);
     return true;
 }
 
@@ -57,14 +60,32 @@ void displayGraph(graph *g) {
         printf("Graph not initialized!\n");
         return;
     }
-
-    printf("\nAdjacency Matrix:\n");
-    for (int i = 0; i < g->vertices; i++) {
+    if(g->vertices <=0){
+        printf("Graph is not initialized, Please create a graph first.");
+        return;
+    }
+     printf("\nAdjacency Matrix (%d vertices):\n", g->vertices);
+     for (int i = 0; i < g->vertices; i++) {
         for (int j = 0; j < g->vertices; j++) {
             printf("%3d", g->adj[i][j]);
         }
         printf("\n");
     }
+    
+    // Simple edge display
+    printf("\nEdges: ");
+    bool firstEdge = true;
+    for (int i = 0; i < g->vertices; i++) {
+        for (int j = 0; j < g->vertices; j++) {
+            if (g->adj[i][j] == 1) {
+                if (!firstEdge) printf(", ");
+                printf("%d->%d", i, j);
+                firstEdge = false;
+            }
+        }
+    }
+    if (firstEdge) printf("None");
+    printf("\n");
 }
 
 bool detectCycle(graph *g) {
@@ -101,13 +122,14 @@ bool detectCycle(graph *g) {
                             printf("\nCycle detected between %d and %d\n", curr, i);
 
                             // simple inline backtrack printing
-                            printf("Cyclic component: %d", i);
+                            printf("\nCYCLE DETECTED! Potential deadlock found!\n");
+                            printf("   Cycle: %d", i);
                             int temp = curr;
                             while (temp != i && temp != -1) {
                                 printf(" -> %d", temp);
                                 temp = parent[temp]; //printed em backwards
                             }
-                            printf(" -> %d\n", i); // complete loop
+                            printf(" -> %d (cycle complete)\n", i); // complete loop
                             return true;
                         }
                     }

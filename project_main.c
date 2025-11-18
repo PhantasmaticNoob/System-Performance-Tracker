@@ -1,3 +1,4 @@
+/* gcc project_main_final.c process-list.c memoryManagement.c functions.c Deadlock.c */
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -273,25 +274,26 @@ int main(){
                             bool going_on = true;
 
                             while (going_on) {
-                                printf("\n==============================\n");
-                                printf(" UNDIRECTED GRAPH OPERATIONS\n");
-                                printf("==============================\n");
-                                printf("1. Safe graph (no cycle)\n");
-                                printf("2. Cyclic graph\n");
+                                printf("\n=========================\n");
+                                printf(" DEADLOCK DETECTION \n");
+                                printf("=========================\n");
+                                printf("1. Acyclic graph (example)\n");
+                                printf("2. Cyclic graph (example)\n");
                                 printf("3. Custom input\n");
                                 printf("4. Add vertex\n");
                                 printf("5. Add edge\n");
-                                printf("6. Exit\n");
+                                printf("6. Detect deadlock\n");
+                                printf("7. Exit\n");
                                 printf("Enter choice: ");
-                                if(scanf("%d", &choice)!=1) {
-                                    printf("Invalid input, Enter btwn 1 and 6");
-                                    while(getchar()!='\n');
+                                if(scanf("%d", &choice) != 1) {
+                                    printf("Invalid input! Please enter a number.\n");
+                                    while(getchar() != '\n');
                                     continue;
                                 }
                                 
 
-                                if (choice < 1 || choice > 6) {
-                                printf("Invalid choice! Please enter 1-6 only.\n");
+                                if (choice < 1 || choice > 7) {
+                                printf("Invalid choice! Please enter 1-7 only.\n");
                                 continue;
                         }
                                 switch (choice) {
@@ -300,10 +302,10 @@ int main(){
                                     addEdge(&g, 0, 1);
                                     addEdge(&g, 1, 2);
                                     addEdge(&g, 2, 3);
-                                    printf("\n--- Safe Graph (No Cycle) ---\n");
+                                    printf("\n Acyclic Graph (No Deadlock)\n");
                                     displayGraph(&g);
                                     if (detectCycle(&g))
-                                        printf("\n Cycle detected!\n");
+                                        printf("\n DEADLOCK DETECTED (cycle)! System is UNSAFE.\n");
                                     else
                                         printf("\n Graph is Acyclic (Safe)\n");
                                     break;
@@ -316,13 +318,13 @@ int main(){
                                     printf("\n--- Cyclic Graph ---\n");
                                     displayGraph(&g);
                                     if (detectCycle(&g))
-                                        printf("\n Cycle detected!\n");
+                                        printf("\nDEADLOCK DETECTED (cycle)! System is UNSAFE.\n");
                                     else
                                         printf("\n Graph is Acyclic (Safe)\n");
                                     break;
 
                                 case 3:
-                                    printf("Enter number of vertices: ");
+                                    printf("Enter number of vertices (v >= 2): ");
                                     fflush(stdin);
                                     if (scanf("%d", &v)  != 1) {
                                         printf("Invalid input for vertices!\n");
@@ -330,16 +332,21 @@ int main(){
                                         continue;
                                     }
 
+                                    if(v < 2){
+                                        printf("Deadlock detection requires atleast 2 processes (vertices).");
+                                        break;
+                                    }
+
                                     initGraph(&g, v);
 
                                     printf("Enter number of edges: ");
                                     if (scanf("%d", &e)!=1 || e > v*v ||e < 0 ) {
-                                        printf("Invalid number of vertices");
+                                        printf("Invalid number of edges");
                                         while (getchar() != '\n'); // clear invalid input
                                         continue;
                                     }
                                     if(e==0){
-                                        printf("No edges-> graph is ascylic. \n");
+                                        printf("No edges-> graph is acyclic. \n");
                                         displayGraph(&g);
                                         printf("Safe Graph\n");
                                         break;
@@ -372,6 +379,19 @@ int main(){
                                     displayGraph(&g);
                                     break;
                                 case 6:
+                                    if(g.vertices < 2) {
+                                        printf("Cannot detect deadlock- need atleast 2 vertices!\n");
+                                    } else {
+                                        if (detectCycle(&g)) {
+                                        printf("\n DEADLOCK DETECTED! System is UNSAFE.\n");
+                                        printf("   Circular wait exists between processes.\n");
+                                    } else {
+                                        printf("\n NO DEADLOCK FOUND! System is SAFE.\n");
+                                        printf("   No circular wait detected.\n");
+                                        }
+                                    }
+                                    break;
+                                case 7:
                                     going_on = false;
                                    break;
 
